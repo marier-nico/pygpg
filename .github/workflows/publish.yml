@@ -63,7 +63,6 @@ jobs:
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-          TWINE_REPOSITORY: testpypi
         run: |
           python -c 'import setuptools; setuptools.setup(version="${{ needs.tag.outputs.tag }}")' sdist bdist_wheel
           twine upload dist/*
