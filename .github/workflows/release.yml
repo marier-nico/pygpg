@@ -25,6 +25,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+          RELEASE_BRANCHES: main
       - name: Install bump2version
         run: pip install bump2version
       - name: Bump Package Version
