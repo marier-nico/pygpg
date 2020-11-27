@@ -16,16 +16,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
-      - name: Cache Tox Install
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-tox-pip-cache
-      - name: Cache Tox Directory
-        uses: actions/cache@v2
-        with:
-          path: .tox
-          key: ${{ runner.os }}-dot-tox-directory
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
