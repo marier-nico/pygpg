@@ -1,0 +1,35 @@
+name: Release New Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+          ref: ${{ github.head_ref }}
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Bump Version & Push Tag
+        id: tag
+        uses: anothrNick/github-tag-action@1.33.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+      - name: Install bump2version
+        run: pip install bump2version
+      - name: Bump Package Version
+        run: bump2version ${{ steps.tag.outputs.part }} setup.cfg
+      - name: Commit Version Bump
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Bumping version to ${{ steps.tag.outputs.new_tag }}
