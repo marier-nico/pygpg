@@ -41,4 +41,4 @@ pygpg {options}
 ```
 
 Both versions behave the same way, but `pg` is shorter and more convenient to type. Running either command yields the
-help menu, which should be detailed enough for you to know what to do!
+help menu, which should be detailed enough to use pygpg effectively!
