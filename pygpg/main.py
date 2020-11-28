@@ -1,12 +1,12 @@
 """Main entrypoint for the CLI."""
 import click
 
+from pygpg.commands.ls import ls
 
-@click.command()
+
+@click.group()
 def main():
-    """Main command to invoke with the CLI."""
-    click.secho("Hello, World!", fg="green")
+    """A thin wrapper around GPG with friendlier command line options!"""
 
 
-if __name__ == "__main__":
-    main()
+main.add_command(ls)
