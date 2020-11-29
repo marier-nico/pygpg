@@ -1,28 +1,17 @@
+"""Functions to display a GPG key under different formats."""
 import click
-
 
 from pygpg.gpg_key import GPGKey
 from pygpg.enums.trust_value import TrustValue
+from pygpg.display.trust_value_colors import TRUST_COLOR
 
 
-UNTRUSTED_MESSAGE = "You do not trust this key"
-TRUSTED_MESSAGE = "You trust this key"
+def display_key_oneline(key: GPGKey, indent=""):
+    """Display a GPG key on the terminal on a single line.
 
-TRUST_COLOR = {
-    TrustValue.UNKNOWN: "yellow",
-    TrustValue.UNTRUSTED: "red",
-    TrustValue.INVALID: "red",
-    TrustValue.REVOKED: "red",
-    TrustValue.EXPIRED: "yellow",
-    TrustValue.MARGINAL: "magenta",
-    TrustValue.FULL: "green",
-    TrustValue.ULTIMATE: "blue",
-    TrustValue.WELL_KNOWN: "green",
-    TrustValue.ERROR: "red",
-}
-
-
-def display_key(key: GPGKey, indent=""):
+    :param key: The GPG key to display
+    :param indent: Indentation to add before printing each key
+    """
     key_type = key.key_type.name.lower().replace("_", " ").capitalize()
     click.echo(f"{indent}{key_type}: ", nl=False)
     click.secho(key.key_id, fg="cyan", nl=False)
@@ -40,7 +29,12 @@ def display_key(key: GPGKey, indent=""):
     click.secho(f" Capabilities: {capabilities}", fg="bright_black")
 
 
-def display_subkeys(key: GPGKey, indent=""):
+def display_subkeys_oneline(key: GPGKey, indent=""):
+    """Display a GPG key's subkeys with each subkey on a single line.
+
+    :param key: The GPG key for which the subkeys should be shown
+    :param indent: Indentation to add before printing each subkey
+    """
     if key.subkeys:
         for subkey in key.subkeys:
-            display_key(subkey, indent)
+            display_key_oneline(subkey, indent)

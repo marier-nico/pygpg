@@ -5,7 +5,7 @@ import click
 
 from pygpg.key_owner import KeyOwner
 from pygpg.gpg_key import GPGKey
-from pygpg.display.display_key import display_key, display_subkeys
+from pygpg.display.display_key import display_key_oneline, display_subkeys_oneline
 from pygpg.display.display_key_owner import display_key_owner
 
 
@@ -14,7 +14,7 @@ from pygpg.display.display_key_owner import display_key_owner
 @click.option("-p", "--private", is_flag=True, help="List private keys in the keyring")
 @click.option("-n", "--no-subkeys", is_flag=True, help="Omit subkeys in the list of shown keys")
 @click.pass_obj
-def ls(gpg, all_: bool, private: bool, no_subkeys: bool):
+def ls(gpg, all_: bool, private: bool, no_subkeys: bool):  # pylint: disable=C0103
     """Show a list of GPG keys in the keyring."""
     public_keys = gpg.list_keys()
     private_keys = gpg.list_keys(True)
@@ -41,7 +41,7 @@ def ls(gpg, all_: bool, private: bool, no_subkeys: bool):
         display_key_owner(owner)
         click.echo()
         for key in public_keys:
-            display_key(key, indent="\t")
+            display_key_oneline(key, indent="\t")
 
             if key.subkeys and not no_subkeys:
-                display_subkeys(key, indent="\t  ")
+                display_subkeys_oneline(key, indent="\t  ")

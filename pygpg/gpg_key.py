@@ -1,3 +1,4 @@
+"""Contains a dataclass to represent a GPG key."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -15,8 +16,8 @@ ISO_FORMAT = "%Y%m%dT%H%M%S"
 
 
 @dataclass
-class GPGKey:
-    """Class for holding the information about a GPG key."""
+class GPGKey:  # pylint: disable=R0902,R0912
+    """Contains data about a GPG key."""
 
     key_id: str
     key_owner: KeyOwner
@@ -31,6 +32,11 @@ class GPGKey:
 
     @staticmethod
     def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> GPGKey:
+        """Create a GPGKey instance from the dict returned by the gnupg library.
+
+        :param gpg_key_dict: The dict returned by the gnupg library
+        :return: An instance of GPGKey with field values taken from the gnupg dict
+        """
         if isinstance(gpg_key_dict["keyid"], str):
             key_id = gpg_key_dict["keyid"]
         else:
@@ -81,7 +87,7 @@ class GPGKey:
 
         subkeys = []
         if gpg_key_dict.get("subkeys"):
-            if isinstance(gpg_key_dict["subkey_info"], Dict):
+            if isinstance(gpg_key_dict["subkey_info"], dict):
                 for _subkey_id, subkey in gpg_key_dict["subkey_info"].items():
                     subkey["uids"] = gpg_key_dict["uids"]
                     subkey["ownertrust"] = gpg_key_dict["ownertrust"]
