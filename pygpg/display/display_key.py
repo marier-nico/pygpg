@@ -28,7 +28,7 @@ def display_key(key: GPGKey, indent=""):
     click.secho(key.key_id, fg="cyan", nl=False)
     click.secho(f" Created: {key.creation_date.isoformat()}", fg="white", nl=False)
 
-    if key.key_validity == TrustValue.EXPIRED:
+    if key.expiration_date and key.key_validity == TrustValue.EXPIRED:
         click.secho(f" Expired: {key.expiration_date.isoformat()}", fg="red", nl=False)
     else:
         if key.expiration_date:

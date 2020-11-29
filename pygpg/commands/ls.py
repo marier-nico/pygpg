@@ -1,8 +1,9 @@
 """This module contains the code for the ls wrapper command."""
-from typing import List
+from typing import Dict, List
 
 import click
 
+from pygpg.key_owner import KeyOwner
 from pygpg.gpg_key import GPGKey
 from pygpg.display.display_key import display_key, display_subkeys
 from pygpg.display.display_key_owner import display_key_owner
@@ -27,7 +28,7 @@ def ls(gpg, all_: bool, private: bool, no_subkeys: bool):
     else:
         keys_to_show = public_keys
 
-    owners_to_keys = {}
+    owners_to_keys: Dict[KeyOwner, List[GPGKey]] = {}
     for key in keys_to_show:
         gpg_key = GPGKey.from_gpg_key_dict(key)
         if gpg_key.key_owner in owners_to_keys:

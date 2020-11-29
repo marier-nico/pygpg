@@ -31,37 +31,63 @@ class GPGKey:
 
     @staticmethod
     def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> GPGKey:
-        key_id = gpg_key_dict["keyid"]
+        if isinstance(gpg_key_dict["keyid"], str):
+            key_id = gpg_key_dict["keyid"]
+        else:
+            raise RuntimeError(f"This GPG key's ID is not a string: {gpg_key_dict}")
+
         key_owner = KeyOwner.from_gpg_key_dict(gpg_key_dict)
         key_type = KeyType(gpg_key_dict["type"])
-        key_validity = TrustValue.from_symbol(gpg_key_dict["trust"])
+
+        if isinstance(gpg_key_dict["trust"], str):
+            key_validity = TrustValue.from_symbol(gpg_key_dict["trust"])
+        else:
+            raise RuntimeError(f"Trust value for this GPG key was not a string: {gpg_key_dict}")
+
         key_capabilities = list({KeyCapability(cap.lower()) for cap in gpg_key_dict["cap"]})
-        key_fingerprint = gpg_key_dict.get("fingerprint")
 
-        if "T" in gpg_key_dict["date"]:
-            creation_date = datetime.strptime(gpg_key_dict["date"], ISO_FORMAT).date()
-        else:
-            creation_date = datetime.fromtimestamp(int(gpg_key_dict["date"])).date()
-
-        if gpg_key_dict["expires"]:
-            if "T" in gpg_key_dict["expires"]:
-                expiration_date = datetime.strptime(gpg_key_dict["expires"], ISO_FORMAT).date()
+        key_fingerprint = None
+        if gpg_key_dict.get("fingerprint"):
+            if isinstance(gpg_key_dict["fingerprint"], str):
+                key_fingerprint = gpg_key_dict["fingerprint"]
             else:
-                expiration_date = datetime.fromtimestamp(int(gpg_key_dict["expires"])).date()
-        else:
-            expiration_date = None
+                raise RuntimeError(f"This GPG key's fingerprint is not a string: {gpg_key_dict}")
 
-        if gpg_key_dict["algo"]:
-            public_key_algorithm = PublicKeyAlgorithm.from_algo_id(int(gpg_key_dict["algo"]))
+        if isinstance(gpg_key_dict["date"], str):
+            if "T" in gpg_key_dict["date"]:
+                creation_date = datetime.strptime(gpg_key_dict["date"], ISO_FORMAT).date()
+            else:
+                creation_date = datetime.fromtimestamp(int(gpg_key_dict["date"])).date()
         else:
+            raise RuntimeError(f"Creation date for this GPG key was not a string: {gpg_key_dict}")
+
+        if isinstance(gpg_key_dict["expires"], str):
+            expiration_date = None
+            if gpg_key_dict["expires"]:
+                if "T" in gpg_key_dict["expires"]:
+                    expiration_date = datetime.strptime(gpg_key_dict["expires"], ISO_FORMAT).date()
+                else:
+                    expiration_date = datetime.fromtimestamp(int(gpg_key_dict["expires"])).date()
+        else:
+            raise RuntimeError(f"Expiration date for this GPG key was not a string: {gpg_key_dict}")
+
+        if isinstance(gpg_key_dict["algo"], str):
             public_key_algorithm = None
+            if gpg_key_dict["algo"]:
+                algo_id = int(gpg_key_dict["algo"])
+                public_key_algorithm = PublicKeyAlgorithm.from_algo_id(algo_id)
+        else:
+            raise RuntimeError(f"This GPG key's algorithm was not a string: {gpg_key_dict}")
 
         subkeys = []
         if gpg_key_dict.get("subkeys"):
-            for _subkey_id, subkey in gpg_key_dict["subkey_info"].items():
-                subkey["uids"] = gpg_key_dict["uids"]
-                subkey["ownertrust"] = gpg_key_dict["ownertrust"]
-                subkeys.append(GPGKey.from_gpg_key_dict(subkey))
+            if isinstance(gpg_key_dict["subkey_info"], Dict):
+                for _subkey_id, subkey in gpg_key_dict["subkey_info"].items():
+                    subkey["uids"] = gpg_key_dict["uids"]
+                    subkey["ownertrust"] = gpg_key_dict["ownertrust"]
+                    subkeys.append(GPGKey.from_gpg_key_dict(subkey))
+            else:
+                raise RuntimeError(f"This GPG key's subkeys are not a dictionary: {gpg_key_dict}")
 
         return GPGKey(
             key_id=key_id,

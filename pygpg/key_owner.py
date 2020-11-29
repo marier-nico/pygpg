@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Union
 import re
 
 from pygpg.enums.trust_value import TrustValue
@@ -20,7 +20,7 @@ class KeyOwner:
         return hash(self.__key())
 
     @staticmethod
-    def from_gpg_key_dict(gpg_key_dict: Dict[str, str]) -> KeyOwner:
+    def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> KeyOwner:
         uids = gpg_key_dict.get("uids")
         if not uids or len(uids) == 0:
             raise ValueError(f"This GPG key does not list any user IDs: {gpg_key_dict}")
@@ -36,8 +36,11 @@ class KeyOwner:
             parsed_uids.append((name, email))
 
         owner_trust = gpg_key_dict.get("ownertrust") or "?"
-        return KeyOwner(
-            name=parsed_uids[0][0],
-            emails=[email for name, email in parsed_uids],
-            trust=TrustValue.from_symbol(owner_trust),
-        )
+        if isinstance(owner_trust, str):
+            return KeyOwner(
+                name=parsed_uids[0][0],
+                emails=[email for name, email in parsed_uids],
+                trust=TrustValue.from_symbol(owner_trust),
+            )
+
+        raise RuntimeError(f"This GPG key's ownertrust was not a string: {gpg_key_dict}")
