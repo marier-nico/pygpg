@@ -21,5 +21,5 @@ TRUST_TO_COLOR = {
 def display_key_owner(owner: KeyOwner):
     formatted_emails = [f"<{email}>" for email in owner.emails]
     click.echo(f"{owner.name} AKA {', '.join(formatted_emails)}")
-    click.echo(f"Trust: ", nl=False)
+    click.echo("Trust: ", nl=False)
     click.secho(owner.trust.name.lower(), fg=TRUST_TO_COLOR[owner.trust])
