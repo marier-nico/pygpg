@@ -19,12 +19,12 @@ def ls(gpg, all_: bool, private: bool, no_subkeys: bool):  # pylint: disable=C01
     public_keys = gpg.list_keys()
     private_keys = gpg.list_keys(True)
 
-    if private:
-        keys_to_show = private_keys
-    elif all_:
+    if all_:
         keys_to_show = []
         keys_to_show.extend(public_keys)
         keys_to_show.extend(private_keys)
+    elif private:
+        keys_to_show = private_keys
     else:
         keys_to_show = public_keys
 
