@@ -14,7 +14,7 @@ TRUST_TO_COLOR = {
     TrustValue.FULL: "green",
     TrustValue.ULTIMATE: "blue",
     TrustValue.WELL_KNOWN: "yellow",
-    TrustValue.ERROR: "yellow"
+    TrustValue.ERROR: "yellow",
 }
 
 

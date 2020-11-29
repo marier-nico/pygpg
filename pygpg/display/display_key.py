@@ -44,5 +44,3 @@ def display_subkeys(key: GPGKey, indent=""):
     if key.subkeys:
         for subkey in key.subkeys:
             display_key(subkey, indent)
-
-

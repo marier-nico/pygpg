@@ -73,5 +73,5 @@ class GPGKey:
             creation_date=creation_date,
             expiration_date=expiration_date,
             public_key_algorithm=public_key_algorithm,
-            subkeys=subkeys
+            subkeys=subkeys,
         )
