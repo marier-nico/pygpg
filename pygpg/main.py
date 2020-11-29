@@ -1,4 +1,5 @@
 """Main entrypoint for the CLI."""
+import sys
 from typing import Optional
 
 import click
@@ -54,7 +55,7 @@ def main(
         gpg.list_keys()  # Test that the GPG executable is usable
     except OSError as ex:
         click.secho(str(ex), fg="red")
-        exit(1)
+        sys.exit(1)
 
 
 main.add_command(ls)
