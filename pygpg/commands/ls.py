@@ -1,4 +1,4 @@
-"""This module contains the code for the ls wrapper command."""
+"""This module contains the code for the ls command."""
 from typing import Dict, List
 
 import click

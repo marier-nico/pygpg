@@ -2,22 +2,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Union
 from datetime import date, datetime
+from typing import List, Optional, Dict, Union
 
 from pygpg.enums.key_algorithm import PublicKeyAlgorithm
-from pygpg.enums.key_type import KeyType
-from pygpg.enums.trust_value import TrustValue
 from pygpg.enums.key_capability import KeyCapability
 from pygpg.enums.key_token import KeyToken
+from pygpg.enums.key_type import KeyType
+from pygpg.enums.trust_value import TrustValue
 from pygpg.key_owner import KeyOwner
-
 
 ISO_FORMAT = "%Y%m%dT%H%M%S"
 
 
 @dataclass
-class GPGKey:  # pylint: disable=R0902,R0912
+class GPGKey:  # pylint: disable=R0902,R0912,R0915
     """Contains data about a GPG key."""
 
     key_id: str

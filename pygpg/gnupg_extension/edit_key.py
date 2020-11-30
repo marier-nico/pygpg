@@ -1,9 +1,10 @@
 """Contains a function which allows editing a GPG key non-interactively."""
-import io
 import subprocess
 from typing import List, Tuple
 
 import gnupg
+
+from pygpg.exceptions import KeyEditError
 
 
 def edit_key(gpg: gnupg.GPG, commands: List[str], key_id: str) -> Tuple[str, str]:
@@ -29,6 +30,11 @@ def edit_key(gpg: gnupg.GPG, commands: List[str], key_id: str) -> Tuple[str, str
     command.remove("--with-colons")
     full_edit_command_string = "\n".join(commands) + "\n"
 
-    result = subprocess.run(command, shell=False, input=full_edit_command_string.encode("utf-8"), capture_output=True)
+    try:
+        result = subprocess.run(
+            command, shell=False, input=full_edit_command_string.encode("utf-8"), capture_output=True, check=True
+        )
+    except subprocess.CalledProcessError as ex:
+        raise KeyEditError(key_id) from ex
 
     return result.stdout.decode("utf-8"), result.stderr.decode("utf-8")
