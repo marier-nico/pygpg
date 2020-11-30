@@ -6,6 +6,7 @@ import click
 import gnupg
 
 from pygpg.commands.ls import ls
+from pygpg.commands.renew import renew
 
 
 @click.group()
@@ -59,6 +60,7 @@ def main(
 
 
 main.add_command(ls)
+main.add_command(renew)
 
 
 if __name__ == "__main__":

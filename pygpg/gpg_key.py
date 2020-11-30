@@ -9,6 +9,7 @@ from pygpg.enums.key_algorithm import PublicKeyAlgorithm
 from pygpg.enums.key_type import KeyType
 from pygpg.enums.trust_value import TrustValue
 from pygpg.enums.key_capability import KeyCapability
+from pygpg.enums.key_token import KeyToken
 from pygpg.key_owner import KeyOwner
 
 
@@ -23,6 +24,7 @@ class GPGKey:  # pylint: disable=R0902,R0912
     key_owner: KeyOwner
     key_type: KeyType
     key_validity: TrustValue
+    key_token: Optional[KeyToken]
     key_capabilities: List[KeyCapability]
     key_fingerprint: Optional[str]
     creation_date: date
@@ -49,6 +51,11 @@ class GPGKey:  # pylint: disable=R0902,R0912
             key_validity = TrustValue.from_symbol(gpg_key_dict["trust"])
         else:
             raise RuntimeError(f"Trust value for this GPG key was not a string: {gpg_key_dict}")
+
+        if isinstance(gpg_key_dict["token"], str):
+            key_token = KeyToken(gpg_key_dict["token"]) if gpg_key_dict["token"] else None
+        else:
+            raise RuntimeError(f"The token for this GPG key was not a string: {gpg_key_dict}")
 
         key_capabilities = list({KeyCapability(cap.lower()) for cap in gpg_key_dict["cap"]})
 
@@ -100,6 +107,7 @@ class GPGKey:  # pylint: disable=R0902,R0912
             key_owner=key_owner,
             key_type=key_type,
             key_validity=key_validity,
+            key_token=key_token,
             key_capabilities=key_capabilities,
             key_fingerprint=key_fingerprint,
             creation_date=creation_date,
