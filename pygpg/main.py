@@ -7,6 +7,7 @@ import gnupg
 
 from pygpg.commands.ls import ls
 from pygpg.commands.renew import renew
+from pygpg.commands.import_export import import_key
 
 
 @click.group()
@@ -61,6 +62,7 @@ def main(
 
 main.add_command(ls)
 main.add_command(renew)
+main.add_command(import_key)
 
 
 if __name__ == "__main__":
