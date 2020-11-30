@@ -1,4 +1,4 @@
-import sys
+"""This module contains the code for the import and export commands."""
 import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -23,16 +23,10 @@ def import_key(gpg: gnupg.GPG, file: str):
         import_keys_in_dir(gpg, path)
         return
 
-    try:
-        imported_keys = import_key_from_file(gpg, path)
-        if imported_keys:
-            click.secho(
-                f"Imported {imported_keys} key{'s' if imported_keys > 1 or imported_keys == 0 else ''}", fg="green"
-            )
-            return
-    except UnicodeDecodeError:
-        # This must mean that the user supplied an archive instead of a file
-        pass
+    imported_keys = import_key_from_file(gpg, path)
+    if imported_keys:
+        click.secho(f"Imported {imported_keys} key{'s' if imported_keys > 1 or imported_keys == 0 else ''}", fg="green")
+        return
 
     with TemporaryDirectory() as temp_dir:
         try:
@@ -43,6 +37,11 @@ def import_key(gpg: gnupg.GPG, file: str):
 
 
 def import_keys_in_dir(gpg: gnupg.GPG, dir_path: Path):
+    """Import all the GPG keys in a directory.
+
+    :param gpg: The GPG interface used by the gnupg library
+    :param dir_path: The path to the directory from which to import keys
+    """
     files = [file for file in dir_path.glob("*") if file.is_file()]
 
     total_count = 0
@@ -53,6 +52,17 @@ def import_keys_in_dir(gpg: gnupg.GPG, dir_path: Path):
 
 
 def import_key_from_file(gpg: gnupg.GPG, file: Path) -> int:
-    with open(file, "r") as f:
-        result = gpg.import_keys(f.read())
-        return result.count
+    """Import GPG keys from a file.
+
+    :param gpg: The GPG interface used by the gnupg library
+    :param file: The file from which to import keys
+    :return:
+    """
+    with open(file, "r") as open_file:
+        result = 0
+        try:
+            result = gpg.import_keys(open_file.read()).count
+        except UnicodeDecodeError:
+            pass
+
+        return result
