@@ -1,4 +1,4 @@
-"""This module contains the code for the ls wrapper command."""
+"""This module contains the code for the ls command."""
 from typing import Dict, List
 
 import click
@@ -7,6 +7,7 @@ from pygpg.key_owner import KeyOwner
 from pygpg.gpg_key import GPGKey
 from pygpg.display.display_key import display_key_oneline, display_subkeys_oneline
 from pygpg.display.display_key_owner import display_key_owner
+from pygpg.utils.keys import get_public_keys, get_private_keys
 
 
 @click.command()
@@ -16,8 +17,8 @@ from pygpg.display.display_key_owner import display_key_owner
 @click.pass_obj
 def ls(gpg, all_: bool, private: bool, no_subkeys: bool):  # pylint: disable=C0103
     """Show a list of GPG keys in the keyring."""
-    public_keys = gpg.list_keys()
-    private_keys = gpg.list_keys(True)
+    public_keys = get_public_keys(gpg)
+    private_keys = get_private_keys(gpg)
 
     if all_:
         keys_to_show = []
@@ -30,11 +31,10 @@ def ls(gpg, all_: bool, private: bool, no_subkeys: bool):  # pylint: disable=C01
 
     owners_to_keys: Dict[KeyOwner, List[GPGKey]] = {}
     for key in keys_to_show:
-        gpg_key = GPGKey.from_gpg_key_dict(key)
-        if gpg_key.key_owner in owners_to_keys:
-            owners_to_keys[gpg_key.key_owner].append(gpg_key)
+        if key.key_owner in owners_to_keys:
+            owners_to_keys[key.key_owner].append(key)
         else:
-            owners_to_keys[gpg_key.key_owner] = [gpg_key]
+            owners_to_keys[key.key_owner] = [key]
 
     for owner, public_keys in owners_to_keys.items():
         click.echo()
