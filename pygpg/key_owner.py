@@ -1,6 +1,4 @@
 """Contains a dataclass to represent a GPG key's owner."""
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import List, Dict, Union
 import re
@@ -23,7 +21,7 @@ class KeyOwner:
         return hash(self.__key())
 
     @staticmethod
-    def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> KeyOwner:
+    def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> "KeyOwner":
         """Create a KeyOwner instance from the dict returned by the gnupg library.
 
         :param gpg_key_dict: The dict returned by the gnupg library
