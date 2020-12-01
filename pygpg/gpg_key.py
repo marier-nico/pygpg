@@ -1,6 +1,4 @@
 """Contains a dataclass to represent a GPG key."""
-from __future__ import annotations
-
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import List, Optional, Dict, Union
@@ -29,10 +27,10 @@ class GPGKey:  # pylint: disable=R0902,R0912,R0915
     creation_date: date
     expiration_date: Optional[date]
     public_key_algorithm: Optional[PublicKeyAlgorithm]
-    subkeys: List[GPGKey]
+    subkeys: List["GPGKey"]
 
     @staticmethod
-    def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> GPGKey:
+    def from_gpg_key_dict(gpg_key_dict: Dict[str, Union[str, Dict]]) -> "GPGKey":
         """Create a GPGKey instance from the dict returned by the gnupg library.
 
         :param gpg_key_dict: The dict returned by the gnupg library

@@ -1,4 +1,8 @@
 click~=7.1.2
 colorama~=0.4.4
 python-gnupg~=0.4.6
+black
+mypy
+pylint
+flake8
 tox

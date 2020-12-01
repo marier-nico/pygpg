@@ -1,5 +1,4 @@
 """Contains an enum to represent the different algorithms used by GPG."""
-from __future__ import annotations
 from enum import Enum
 
 
@@ -21,7 +20,7 @@ class PublicKeyAlgorithm(Enum):
     UNKNOWN = None
 
     @staticmethod
-    def from_algo_id(algo_id: int) -> PublicKeyAlgorithm:
+    def from_algo_id(algo_id: int) -> "PublicKeyAlgorithm":
         """Get the enum variant that is associated with the given algorithm ID.
 
         :param algo_id: The algorithm ID for which to get the algorithm in the enum

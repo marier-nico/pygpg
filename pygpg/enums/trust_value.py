@@ -1,5 +1,4 @@
 """Contains an enum to represent the different trust levels of a key or its owner."""
-from __future__ import annotations
 from enum import Enum
 
 
@@ -28,7 +27,7 @@ class TrustValue(Enum):
     ERROR = {"?"}
 
     @staticmethod
-    def from_symbol(symbol: str) -> TrustValue:
+    def from_symbol(symbol: str) -> "TrustValue":
         """Get the enum variant that is associated with the given symbol.
 
         The symbol is the single letter that is used by GPG to identify trust levels.
