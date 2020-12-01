@@ -19,4 +19,4 @@ jobs:
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
-        run: tox -e py
+        run: tox -e py${{ matrix.python }}
