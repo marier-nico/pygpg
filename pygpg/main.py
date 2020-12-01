@@ -5,9 +5,9 @@ from typing import Optional
 import click
 import gnupg
 
+from pygpg.commands.import_export import import_key
 from pygpg.commands.ls import ls
 from pygpg.commands.renew import renew
-from pygpg.commands.import_export import import_key
 
 
 @click.group()

@@ -1,7 +1,7 @@
 """Contains a dataclass to represent a GPG key's owner."""
-from dataclasses import dataclass
-from typing import List, Dict, Union
 import re
+from dataclasses import dataclass
+from typing import Dict, List, Union
 
 from pygpg.enums.trust_value import TrustValue
 

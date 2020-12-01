@@ -1,7 +1,7 @@
 """Contains a dataclass to represent a GPG key."""
 from dataclasses import dataclass
 from datetime import date, datetime
-from typing import List, Optional, Dict, Union
+from typing import Dict, List, Optional, Union
 
 from pygpg.enums.key_algorithm import PublicKeyAlgorithm
 from pygpg.enums.key_capability import KeyCapability

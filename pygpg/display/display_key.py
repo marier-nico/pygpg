@@ -1,9 +1,9 @@
 """Functions to display a GPG key under different formats."""
 import click
 
-from pygpg.gpg_key import GPGKey
-from pygpg.enums.trust_value import TrustValue
 from pygpg.display.trust_value_colors import TRUST_COLOR
+from pygpg.enums.trust_value import TrustValue
+from pygpg.gpg_key import GPGKey
 
 
 def display_key_oneline(key: GPGKey, indent=""):

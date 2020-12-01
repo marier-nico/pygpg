@@ -1,8 +1,8 @@
 """Functions to display a GPG key's owner."""
 import click
 
-from pygpg.key_owner import KeyOwner
 from pygpg.display.trust_value_colors import TRUST_COLOR
+from pygpg.key_owner import KeyOwner
 
 
 def display_key_owner(owner: KeyOwner):

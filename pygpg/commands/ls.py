@@ -3,11 +3,11 @@ from typing import Dict, List
 
 import click
 
-from pygpg.key_owner import KeyOwner
-from pygpg.gpg_key import GPGKey
 from pygpg.display.display_key import display_key_oneline, display_subkeys_oneline
 from pygpg.display.display_key_owner import display_key_owner
-from pygpg.utils.keys import get_public_keys, get_private_keys
+from pygpg.gpg_key import GPGKey
+from pygpg.key_owner import KeyOwner
+from pygpg.utils.keys import get_private_keys, get_public_keys
 
 
 @click.command()
