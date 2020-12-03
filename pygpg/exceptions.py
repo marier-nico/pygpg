@@ -20,3 +20,14 @@ class KeyEditError(PyGPGError):
 
         super().__init__(msg)
         self.key_id = key_id
+
+
+class KeyExportError(PyGPGError):
+    """Error for errors that occur when exporting keys."""
+
+    def __init__(self, key_id: str, msg=None):
+        if msg is None:
+            msg = f"There was an error exporting the GPG key with ID: {key_id}"
+
+        super().__init__(msg)
+        self.key_id = key_id

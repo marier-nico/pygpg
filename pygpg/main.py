@@ -5,7 +5,7 @@ from typing import Optional
 import click
 import gnupg
 
-from pygpg.commands.import_export import import_key
+from pygpg.commands.import_export import export, export_subkeys, import_key
 from pygpg.commands.ls import ls
 from pygpg.commands.renew import renew
 
@@ -63,6 +63,8 @@ def main(
 main.add_command(ls)
 main.add_command(renew)
 main.add_command(import_key)
+main.add_command(export_subkeys)
+main.add_command(export)
 
 
 if __name__ == "__main__":
