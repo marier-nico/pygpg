@@ -1,10 +1,14 @@
 """This module contains the code for the import and export commands."""
 import shutil
+import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Optional, Tuple
 
 import click
 import gnupg
+
+from pygpg.gnupg_extension.export_key import export_private_key, export_public_key, export_secret_subkeys
 
 
 @click.command("import")
@@ -61,8 +65,74 @@ def import_key_from_file(gpg: gnupg.GPG, file: Path) -> int:
     with open(file, "r") as open_file:
         result = 0
         try:
-            result = gpg.import_keys(open_file.read()).count
+            result = gpg.import_keys(open_file.read(), extra_args=["--import-options", "restore"]).count
         except UnicodeDecodeError:
             pass
 
         return result
+
+
+@click.command("export-subkeys")
+@click.argument("key_id", nargs=-1)
+@click.option("-o", "--output", type=click.Path(exists=False), help="Save the exported subkeys to this file")
+@click.pass_obj
+def export_subkeys(gpg: gnupg.GPG, output: Optional[str], key_id: Tuple[str]):
+    """Export the private subkeys of one or many primary keys.
+
+    KEY_ID is the ID of the primary key for which to export the secret subkeys.
+    You can specify multiple IDs at once.
+
+    The intended use for this command is to export secret subkeys before deleting
+    the primary private key and re-importing the secret subkeys. This allows using
+    the subkeys without having the primary private key on the system and allows for
+    more security (by storing the primary private key somewhere else).
+
+    In this situation, GPG exports a stub of the primary private key along with the
+    subkeys, so note that this will not be importable by any other OpenPGP implementation.
+
+    NOTE: If you want to backup keys, see the `backup` command.
+    """
+    if output and Path(output).exists():
+        click.secho("A file already exists at this path, aborting to avoid overwriting", fg="red")
+        sys.exit(1)
+
+    all_output = []
+    for key in key_id:
+        private_key, _err = export_secret_subkeys(gpg, key)
+        all_output.append(private_key)
+
+    if output:
+        with open(output, "w") as file:
+            file.write("\n".join(all_output))
+    else:
+        click.echo("\n".join(all_output))
+
+
+@click.command()
+@click.argument("key_id", nargs=-1)
+@click.option("-p", "--private", is_flag=True, help="Export a private key instead of a public key")
+@click.option("-o", "--output", type=click.Path(exists=False), help="Save the exported keys to this file")
+@click.pass_obj
+def export(gpg: gnupg.GPG, output: Optional[str], private: bool, key_id: Tuple[str]):
+    """Export one or many GPG keys.
+
+    KEY_ID is the ID of the primary key that we want to export.
+    You can specify multiple IDs at once.
+    """
+    if output and Path(output).exists():
+        click.secho("A file already exists at this path, aborting to avoid overwriting", fg="red")
+        sys.exit(1)
+
+    all_output = []
+    for key in key_id:
+        if private:
+            export_output, _err = export_private_key(gpg, key)
+        else:
+            export_output, _err = export_public_key(gpg, key)
+        all_output.append(export_output)
+
+    if output:
+        with open(output, "w") as file:
+            file.write("\n".join(all_output))
+    else:
+        click.echo("\n".join(all_output))

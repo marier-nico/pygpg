@@ -6,11 +6,10 @@ from typing import Optional
 import click
 import gnupg
 
-from pygpg.enums.key_token import KeyToken
 from pygpg.enums.trust_value import TrustValue
 from pygpg.exceptions import KeyEditError
 from pygpg.gnupg_extension.edit_key import edit_key
-from pygpg.utils.keys import get_private_keys
+from pygpg.utils.keys import get_full_private_keys
 
 
 def validate_valid_duration(_ctx, _param, value: str) -> str:
@@ -44,14 +43,11 @@ def validate_key_id(ctx, _param, value: Optional[str]) -> Optional[str]:
     """
     if value:
         value = value.strip()
-        private_keys = get_private_keys(ctx.obj)
-        supplied_key = [key for key in private_keys if key.key_id == value]
+        valid_keys = get_full_private_keys(ctx.obj)
+        supplied_key = [key for key in valid_keys if key.key_id == value]
 
         if not supplied_key:
-            raise click.BadParameter("must be a primary key")
-
-        if supplied_key[0].key_token == KeyToken.STUB:
-            raise click.BadParameter("the private part of the supplied key must be available")
+            raise click.BadParameter("must be a full primary key (not stubbed)")
 
     return value
 
@@ -64,7 +60,7 @@ def prompt_for_key_id(gpg: gnupg.GPG) -> str:
     :param gpg: The GPG interface used by the gnupg library
     :return: The selected key ID
     """
-    valid_private_keys = [key for key in get_private_keys(gpg) if key.key_token == KeyToken.FULL]
+    valid_private_keys = get_full_private_keys(gpg)
 
     if not valid_private_keys:
         click.secho("There are no keys that can be renewed in your keyring", fg="yellow")
@@ -129,7 +125,7 @@ def renew(gpg: gnupg.GPG, key_id: Optional[str], all_: bool, valid_duration: str
     edit_key_commands = ["expire", valid_duration]
 
     if all_:
-        gpg_key = [key for key in get_private_keys(gpg) if key.key_id == key_id][0]
+        gpg_key = [key for key in get_full_private_keys(gpg) if key.key_id == key_id][0]
         for i, _subkey in enumerate(gpg_key.subkeys):
             edit_key_commands.extend([f"key {i + 1}", "expire", valid_duration])
 
