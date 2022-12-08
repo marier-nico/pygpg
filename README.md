@@ -16,10 +16,6 @@ management and usage simple and easy!
 
 ## Installation
 
-### With Pip
-
-Installing is simply done by running `pip install pygpg`.
-
 ### From Source
 
 This is fairly simple as well. Just clone the project and run `python setup.py install` (note that you should specify
